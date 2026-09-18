@@ -24,7 +24,7 @@ Clientes suportados = 75 / 0,3                     = 250 clientes simultâneos
 
 Com rate limit, seriam necessários mais de 250 clientes para ameaçar o servidor. Sem rate limit, bastam 38, porque nada impede um único cliente de fazer 2 requisições por segundo sozinho. Os testes usam 60 clientes: pouco para a rota protegida, muito para a desprotegida.
 
-As duas rotas ficam em `enem_server/app.py`, e os mecanismos comparados (controle de capacidade e rate limit) em `enem_server/limites.py`.
+As duas rotas ficam em `enem_server/app.py`, e os mecanismos comparados (controle de capacidade e rate limit) em `enem_server/limits.py`.
 
 ---
 
@@ -144,7 +144,7 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
   Abra um novo terminal, ative o ambiente virtual e execute o script. Ele roda os dois cenários em sequência e imprime a comparação no final:
 
 ```bash
-    python stress_monitoring/teste_manual.py
+    python stress_monitoring/manual_test.py
 ```
 
   A execução leva cerca de um minuto. Os parâmetros podem ser ajustados:
@@ -158,7 +158,7 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
 | `--rampa`    | `5`     | quantos clientes entram por segundo             |
 
 ```bash
-    python stress_monitoring/teste_manual.py --rota sem-protecao --clientes 100 --duracao 30
+    python stress_monitoring/manual_test.py --rota sem-protecao --clientes 100 --duracao 30
 ```
 
 ### Passo 6. Teste de Estresse com Locust
@@ -211,11 +211,11 @@ Todos os números ficam em `enem_server/config.py`. Reinicie o servidor após ed
 
 | Constante                      | Padrão | Efeito                                                                |
 | ------------------------------ | ------- | --------------------------------------------------------------------- |
-| `CAPACIDADE_SIMULTANEA`      | `15`  | quantas consultas cabem ao mesmo tempo; quanto menor, mais fácil cai |
-| `TEMPO_DA_CONSULTA_SEGUNDOS` | `0.2` | quanto cada consulta demora                                           |
-| `LIMITE_DE_REQUISICOES`      | `3`   | quantas consultas cada cliente pode fazer...                          |
-| `JANELA_EM_SEGUNDOS`         | `10`  | ...dentro desse intervalo                                             |
+| `CONCURRENT_CAPACITY`        | `15`  | quantas consultas cabem ao mesmo tempo; quanto menor, mais fácil cai |
+| `QUERY_DURATION_SECONDS`      | `0.2` | quanto cada consulta demora                                           |
+| `REQUEST_LIMIT`              | `3`   | quantas consultas cada cliente pode fazer...                          |
+| `WINDOW_SECONDS`              | `10`  | ...dentro desse intervalo                                             |
 
-Aumentar `LIMITE_DE_REQUISICOES` para `12` faz o servidor entregar muito mais boletins sem cair, o que ilustra o ajuste fino da proteção. Em `30`, ele volta a cair.
+Aumentar `REQUEST_LIMIT` para `12` faz o servidor entregar muito mais boletins sem cair, o que ilustra o ajuste fino da proteção. Em `30`, ele volta a cair.
 
-Se a rota sem proteção não estiver caindo na sua máquina, aumente `--clientes` ou reduza `CAPACIDADE_SIMULTANEA`. Se a rota protegida estiver devolvendo 503, reduza `--rampa` para que os clientes entrem de forma mais suave.
+Se a rota sem proteção não estiver caindo na sua máquina, aumente `--clientes` ou reduza `CONCURRENT_CAPACITY`. Se a rota protegida estiver devolvendo 503, reduza `--rampa` para que os clientes entrem de forma mais suave.
